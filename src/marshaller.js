@@ -7,6 +7,19 @@ angular.module('domain', ['ngResource'])
 		
 		var Marshaller = function(){
 
+			this.parse = function(settings){
+				var out = {}
+
+				angular.forEach(settings, function(rules, key){
+					rules = '$prop | ' + rules;
+
+					out[key] = $parse(rules);
+				})
+
+				return out;
+			}
+
+
 			this.marshal = function(domain, settings){
 				// Make shallow copy to avoid overriding
 				var out = angular.extend({}, domain)

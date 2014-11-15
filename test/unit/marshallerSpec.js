@@ -21,8 +21,21 @@ describe('$marshaller Service', function(){
     domain = new Domain()
   })
 
-  xit('Should use registered marshallers', function(){
+  it('Should parse settings', function(){
     // given
+    var rules = {
+      name: 'uppercase',
+      age: 'number',
+      birthday: 'date'
+    }
+
+    // when
+    result = service.parse(rules)
+
+    // then
+    expect(result.name).toEqual(jasmine.any(Function))
+    expect(result.age).toEqual(jasmine.any(Function))
+    expect(result.birthday).toEqual(jasmine.any(Function))
   })
 
 
