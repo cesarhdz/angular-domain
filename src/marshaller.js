@@ -20,24 +20,18 @@ angular.module('domain', ['ngResource'])
 			}
 
 
-			this.marshal = function(domain, settings){
+			this.marshal = function(domain, rules){
 				// Make shallow copy to avoid overriding
 				var out = angular.extend({}, domain)
 
-				angular.forEach(settings, function(rules, key){
-					// Add $prop variable as the target of the filter
-					rules = '$prop | ' + rules;
-
-					// Compile rules
-					var getter = $parse(rules);
-
+				angular.forEach(rules, function(filter, key){
 					var context = {
 						$prop: out[key],
 						$obj: domain
 					}
 
 					// Apply compiled rules to context
-					out[key] = getter(context)
+					out[key] = filter(context)
 				})
 
 				return out;

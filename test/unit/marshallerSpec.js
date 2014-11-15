@@ -39,13 +39,12 @@ describe('$marshaller Service', function(){
   })
 
 
-  it('Should marshal declared properties', function(){
+  it('Should apply rules to marshal object', function(){
     // where
-    var settings = { name: 'lowercase|json' }
+    var settings = { name: function(context){ 
+      return '"mixedcasename"'
+    }}
 
-    // given
-    // lowercase filter is registered
-    
     // and
     domain.name = 'MixedCaseName'
 
