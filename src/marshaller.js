@@ -3,23 +3,28 @@
 
 angular.module('domain', ['ngResource'])
 
-	.service('$marshaller', function($injector){
-
-
-		console.log('domain module')
+	.service('$marshaller', function($parse){
 		
 		var Marshaller = function(){
 
 			this.marshal = function(domain, settings){
-				// Make shallow copy
+				// Make shallow copy to avoid overriding
 				var out = angular.extend({}, domain)
 
 				angular.forEach(settings, function(rules, key){
-					// Load Filter
-					var filter = $injector.get(rules + 'Filter')
+					// Add $prop variable as the target of the filter
+					rules = '$prop | ' + rules;
 
-					// Apply filter
-					out[key] = filter(out[key])
+					// Compile rules
+					var getter = $parse(rules);
+
+					var context = {
+						$prop: out[key],
+						$obj: domain
+					}
+
+					// Apply compiled rules to context
+					out[key] = getter(context)
 				})
 
 				return out;

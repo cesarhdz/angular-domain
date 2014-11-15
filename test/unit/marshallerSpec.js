@@ -28,7 +28,7 @@ describe('$marshaller Service', function(){
 
   it('Should marshal declared properties', function(){
     // where
-    var settings = { name: 'lowercase' }
+    var settings = { name: 'lowercase|json' }
 
     // given
     // lowercase filter is registered
@@ -40,7 +40,7 @@ describe('$marshaller Service', function(){
     result = service.marshal(domain, settings)
 
     // then
-    expect(result.name).toBe('mixedcasename')
+    expect(result.name).toBe('"mixedcasename"')
   })
 
   xit('Should allow partial marshalling', function(){
