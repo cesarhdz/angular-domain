@@ -36,7 +36,7 @@ describe('$marshaller Service', function(){
     expect(result.birthday).toEqual(jasmine.any(Function))
   })
 
-  it('Should protoype $marshal method to domain', function(){
+  it('Should protoype $$marshallers functions to domain', function(){
     // when
     service.bind(Domain, rules)
 
@@ -63,6 +63,25 @@ describe('$marshaller Service', function(){
 
     // then
     expect(result.name).toBe('"mixedcasename"')
+  })
+
+  it('Should prototype $marshal method to domain', function(){
+    // given
+    service.bind(Domain, rules)
+
+    // and
+    domain = new Domain()
+    domain.name = 'camelCase'
+
+    // when
+    result = domain.$marshal()
+
+    // then
+    // Name is passed through marshal function
+    expect(result.name).toBe('"CAMELCASE"')
+
+    // Result is not a Domain, to avoid overriding
+    expect(result).not.toEqual(jasmine.any(Domain))
   })
 
 });
