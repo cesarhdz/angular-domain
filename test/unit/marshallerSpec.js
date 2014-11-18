@@ -6,6 +6,11 @@ describe('$marshaller Service', function(){
   service,
   domain,
   result,
+  rules = {
+    name: 'uppercase|json',
+    age: 'number',
+    birthday: 'date'
+  },
   Domain = function(){
     this.name
     this.age
@@ -22,13 +27,6 @@ describe('$marshaller Service', function(){
   })
 
   it('Should parse settings', function(){
-    // given
-    var rules = {
-      name: 'uppercase',
-      age: 'number',
-      birthday: 'date'
-    }
-
     // when
     result = service.parse(rules)
 
@@ -38,6 +36,18 @@ describe('$marshaller Service', function(){
     expect(result.birthday).toEqual(jasmine.any(Function))
   })
 
+  it('Should protoype $marshal method to domain', function(){
+    // when
+    service.bind(Domain, rules)
+
+    // and
+    domain = new Domain()
+
+    // then
+    expect(domain.$$marshallers.name).toEqual(jasmine.any(Function))
+    expect(domain.$$marshallers.age).toEqual(jasmine.any(Function))
+    expect(domain.$$marshallers.birthday).toEqual(jasmine.any(Function))
+  })
 
   it('Should apply rules to marshal object', function(){
     // where
@@ -55,8 +65,5 @@ describe('$marshaller Service', function(){
     expect(result.name).toBe('"mixedcasename"')
   })
 
-  xit('Should allow partial marshalling', function(){
-    // pending()
-  })
 });
 

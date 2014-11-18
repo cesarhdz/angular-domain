@@ -5,7 +5,16 @@ angular.module('domain', ['ngResource'])
 
 	.service('$marshaller', function($parse){
 		
+		var config = {
+			key: '$$marshallers',
+			method: '$marhsal'
+		}
+
 		var Marshaller = function(){
+
+			this.bind = function(Domain, rules){
+				Domain.prototype[config.key] = this.parse(rules)
+			}
 
 			this.parse = function(settings){
 				var out = {}
