@@ -1,7 +1,7 @@
 'use strict';
 
 
-angular.module('domain', ['ngResource'])
+angular.module('domain')
 
 	.service('$marshaller', function($parse){
 		
