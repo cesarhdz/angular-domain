@@ -35,8 +35,15 @@ angular.module('domain')
 					angular.forEach(rules.split(config.separator), function(rule){
 						var constraint = new Constraint(rule)
 
-						rule = config.propertyRef + ' ' +  config.separator + ' ' + rule
-						constraint.callback = $parse(rule)
+						try{
+							constraint.callback = $parse(config.propertyRef + ' ' +  config.separator + ' ' + rule)
+						}
+						catch(e){
+							throw new Error(
+								'[' + rule + '] cannot be parsed. ' +
+								'Are you sure [' + constraint.rule + '] filter exists?'
+							)
+						}
 
 
 						out[key].push(constraint)

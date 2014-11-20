@@ -7,6 +7,8 @@ describe('$domainValidator Service', function(){
   domain,
   result,
   constraints = {},
+  error,
+  fn,
   Domain = function(){
     this.name
     this.age
@@ -40,6 +42,29 @@ describe('$domainValidator Service', function(){
     // and constraints have a callback, that the propety must pass
     expect(result.name[0].callback).toEqual(jasmine.any(Function))
     expect(result.name[1].callback).toEqual(jasmine.any(Function))
+
+
+  })
+
+
+  it('Should fail on invalid validator', function(){
+
+    // given
+    constraints.name = 'invalidValidator'
+    error = '[invalidValidator] cannot be parsed. '
+          + 'Are you sure [invalidValidator] filter exists?'
+          // + "\n"
+          // + '[$injector:unpr] Unknown provider: invalidValidatorFilterProvider <- invalidValidatorFilter http://errors.angularjs.org/1.3.2/$injector/unpr?p0=invalidValidatorFilterProvider%20%3C-%20invalidValidatorFilter'  
+  
+
+
+    // when
+    var fn = function(){
+      service.parse(constraints)
+    }
+    
+    // then
+    expect(fn).toThrow(new Error(error))
 
 
   })
