@@ -21,6 +21,12 @@ angular.module('domain')
 			this.callback
 		},
 
+
+		ValidationError = function ValidationError(constraint, context){
+			this.rule = constraint.rule
+			this.value = context[config.propertyRef]
+		},
+
 		Validator = function(){
 
 			var $validator = this;
@@ -52,6 +58,32 @@ angular.module('domain')
 
 				return out;
 			}
+
+
+			this.validate = function(domain, constraints){
+
+				var errors = {}
+
+				angular.forEach(constraints, function(constraint, key){
+					var context = {
+						$prop: domain[key],
+						$obj: domain
+					}
+
+					angular.forEach(constraint, function(c){
+						if(errors[key]) return
+
+						if(! c.callback(context))
+							errors[key] = new ValidationError(c, context)
+					})
+				})
+
+				domain[config.errors] = errors
+
+				// zero errors means domain is valid
+				return angular.equals({}, errors) ? true : false
+			}
+			
 		}
 
 

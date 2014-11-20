@@ -69,6 +69,46 @@ describe('$domainValidator Service', function(){
 
   })
 
+  // setup
+  var valid = function(){ return true },
+      invalid = function(){ return false }
+
+  // where
+  var where = [
+    {
+      key: 'invalid + valid',
+      expected: false,
+      constraints: {
+        name: [{ callback: invalid }, {callback: valid}]
+      }
+    },
+
+    {
+      key: 'valid + valid',
+      expected: true,
+      constraints: {
+        name: [{ callback: valid }, { callback: valid }]
+      }
+    },
+
+    {
+      key: '[]',
+      expected: true,
+      constraints: []
+    }
+  ]
+
+
+  // then
+  angular.forEach(where, function(r){
+    it('Should validate agains list of validators ' + r.key, function(){
+
+      expect(service.validate(domain, r.constraints))
+        .toBe(r.expected)
+    })
+  })
+
+
 
 });
 
