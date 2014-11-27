@@ -20,9 +20,12 @@ module.exports = function(config) {
 
     browsers : ['Firefox'],
 
+    reporters: ['spec'],
+
     plugins : [
         'karma-firefox-launcher',
-        'karma-jasmine'
+        'karma-jasmine',
+        'karma-spec-reporter'
     ]
   });
 
