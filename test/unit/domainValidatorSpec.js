@@ -3,6 +3,7 @@
 describe('$domainValidator Service', function(){
   
   var 
+  provider,
   service,
   domain,
   result,
@@ -14,7 +15,9 @@ describe('$domainValidator Service', function(){
     this.age
   }
 
-  beforeEach(module('domain'))
+  beforeEach(module('domain', function($domainValidatorProvider){
+    provider = $domainValidatorProvider
+  }))
 
   beforeEach(inject(function($domainValidator){
     service = $domainValidator
@@ -51,11 +54,8 @@ describe('$domainValidator Service', function(){
 
     // given
     constraints.name = 'invalidValidator'
-    error = '[invalidValidator] cannot be parsed. '
+    error = '[$prop | invalidValidator] using [invalidValidator] cannot be parsed. '
           + 'Are you sure [invalidValidator] filter exists?'
-          // + "\n"
-          // + '[$injector:unpr] Unknown provider: invalidValidatorFilterProvider <- invalidValidatorFilter http://errors.angularjs.org/1.3.2/$injector/unpr?p0=invalidValidatorFilterProvider%20%3C-%20invalidValidatorFilter'  
-  
 
 
     // when
@@ -69,45 +69,50 @@ describe('$domainValidator Service', function(){
 
   })
 
-  // setup
-  var valid = function(){ return true },
-      invalid = function(){ return false }
 
-  // where
-  var where = [
-    {
-      key: 'invalid + valid',
-      expected: false,
-      constraints: {
-        name: [{ callback: invalid }, {callback: valid}]
+
+  describe('Validation Logic', function(){
+
+    // setup
+    var valid = function(){ return true },
+        invalid = function(){ return false }
+
+    // where
+    var where = [
+      {
+        key: 'invalid + valid',
+        expected: false,
+        constraints: {
+          name: [{ callback: invalid }, {callback: valid}]
+        }
+      },
+
+      {
+        key: 'valid + valid',
+        expected: true,
+        constraints: {
+          name: [{ callback: valid }, { callback: valid }]
+        }
+      },
+
+      {
+        key: 'null',
+        expected: true,
+        constraints: []
       }
-    },
+    ]
 
-    {
-      key: 'valid + valid',
-      expected: true,
-      constraints: {
-        name: [{ callback: valid }, { callback: valid }]
-      }
-    },
+    // then
+    angular.forEach(where, function(r){
+      it('Should return [' +  r.expected + '] with validators [' + r.key + ']', function(){
 
-    {
-      key: '[]',
-      expected: true,
-      constraints: []
-    }
-  ]
-
-
-  // then
-  angular.forEach(where, function(r){
-    it('Should validate agains list of validators ' + r.key, function(){
-
-      expect(service.validate(domain, r.constraints))
-        .toBe(r.expected)
+        expect(service.validate(domain, r.constraints))
+          .toBe(r.expected)
+          
+      })
     })
+    
   })
-
 
 
 });

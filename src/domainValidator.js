@@ -3,31 +3,33 @@
 
 angular.module('domain')
 
-	.service('$domainValidator', function($parse){
+	.provider('$domainValidator', function(){
+
+		var provider = this;
 		
-		var config = {
+		provider.config = {
 			key: '$constraints',
 			method: '$validate',
 			errors: '$errors',
 			propertyRef: '$prop',
 			domainRef: '$domain',
 			separator: '|'
-		},
+		}
 
-		Constraint = function Constraint(rule){
+		provider.Constraint = function Constraint(rule){
 			// Remove parameters from rule
 			this.rule = rule.split(':')[0]
 
 			this.callback
-		},
+		}
 
 
-		ValidationError = function ValidationError(constraint, context){
+		provider.ValidationError = function ValidationError(constraint, context){
 			this.rule = constraint.rule
-			this.value = context[config.propertyRef]
-		},
+			this.value = context[provider.config.propertyRef]
+		}
 
-		Validator = function(){
+		var Validator = function Validator($parse){
 
 			var $validator = this;
 
@@ -38,15 +40,16 @@ angular.module('domain')
 					// Array to hold constraints
 					out[key] = []
 
-					angular.forEach(rules.split(config.separator), function(rule){
-						var constraint = new Constraint(rule)
+					angular.forEach(rules.split(provider.config.separator), function(rule){
+						var constraint = new provider.Constraint(rule),
+							callback = provider.config.propertyRef + ' ' +  provider.config.separator + ' ' + rule
 
 						try{
-							constraint.callback = $parse(config.propertyRef + ' ' +  config.separator + ' ' + rule)
+							constraint.callback = $parse(callback)
 						}
 						catch(e){
 							throw new Error(
-								'[' + rule + '] cannot be parsed. ' +
+								'[' + callback + ']' + ' using [' + rule + '] cannot be parsed. ' +
 								'Are you sure [' + constraint.rule + '] filter exists?'
 							)
 						}
@@ -74,11 +77,11 @@ angular.module('domain')
 						if(errors[key]) return
 
 						if(! c.callback(context))
-							errors[key] = new ValidationError(c, context)
+							errors[key] = new provider.ValidationError(c, context)
 					})
 				})
 
-				domain[config.errors] = errors
+				domain[provider.config.errors] = errors
 
 				// zero errors means domain is valid
 				return angular.equals({}, errors) ? true : false
@@ -86,7 +89,9 @@ angular.module('domain')
 			
 		}
 
-
-		return new Validator()
+		// Validator Factory
+		this.$get = ['$parse', function($parse){
+			return new Validator($parse);
+		}]
 	})
 
